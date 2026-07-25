@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIEL - Dashboard de Producción V2.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+            scroll-behavior: smooth;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+
+        .card {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .shot-card {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .shot-card:hover {
+            border-color: #6366F1;
+            transform: translateY(-2px);
+        }
+
+        .shot-card.is-recorded {
+            border-color: #10B981 !important;
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .shot-card.is-recorded::after {
+            content: "✓ GRABADO";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: 900;
+            color: #10B981;
+            letter-spacing: 0.1em;
+        }
+
+        .shot-details {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease;
+        }
+
+        .shot-card.active .shot-details {
+            max-height: 500px;
+            opacity: 1;
+            padding-top: 1rem;
+        }
+
+        .block-divider {
+            height: 4px;
+            width: 80px;
+            margin: 1.5rem auto;
+            border-radius: 99px;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 1rem;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .record-toggle {
+            transition: all 0.2s;
+        }
+        
+        .record-toggle:hover {
+            background-color: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-12 text-center">
+            <div class="inline-block px-3 py-1 mb-4 text-[10px] font-bold uppercase tracking-[0.2em] bg-indigo-500/10 text-indigo-400 rounded-full border border-indigo-500/20">
+                Planificación Ambiental y Horaria
+            </div>
+            <h1 class="text-6xl md:text-8xl font-extrabold mb-4 tracking-tighter italic">
+                MIEL <span class="text-indigo-500">OPTICS</span>
+            </h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto font-light">
+                Estado de la producción en tiempo real. Marque los planos completados para actualizar el progreso.
+            </p>
+        </header>
+
+        <nav class="sticky-nav flex justify-center gap-4 mb-20 p-2 rounded-full border border-slate-800 shadow-2xl">
+            <a href="#global" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors text-slate-400">Datos</a>
+            <a href="#ambiente" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-rose-400 transition-colors text-slate-400">Seguridad</a>
+            <a href="#bloque1" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-teal-400 transition-colors text-slate-400">Río</a>
+            <a href="#bloque2" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-amber-500 transition-colors text-slate-400">Travesía</a>
+            <a href="#bloque3" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-indigo-400 transition-colors text-slate-400">Eclipse</a>
+        </nav>
+
+        <section id="global" class="mb-32">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="card p-8 rounded-[2rem] shadow-xl">
+                        <h3 class="text-xs font-black uppercase text-slate-500 tracking-tighter mb-2">Total Planos</h3>
+                        <p class="text-5xl font-black">33</p>
+                    </div>
+                    <div class="card p-8 rounded-[2rem] border-l-8 border-rose-500 bg-rose-500/5">
+                        <h3 class="text-xs font-black uppercase text-rose-400 tracking-tighter mb-4">Pico Térmico</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">Máxima de 31°C entre las <span class="text-white font-bold">14:00h y 17:30h</span> coincidiendo con el "Corte Motor".</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 card p-8 rounded-[2rem]">
+                    <h3 class="text-sm font-bold uppercase text-center mb-8 tracking-widest">Focales vs. Distribución Horaria</h3>
+                    <div class="chart-container"><canvas id="globalLensChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ambiente" class="mb-32 scroll-mt-24">
+            <div class="card p-10 rounded-[3rem] bg-slate-900 border-slate-800">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-black mb-2">Condiciones Ambientales</h2>
+                    <p class="text-slate-500 text-sm">Ajustado a citación 11:00h según Orden de Rodaje #1</p>
+                </div>
+                <div class="chart-container h-[400px] max-w-full"><canvas id="thermalLightChart"></canvas></div>
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-sm italic text-slate-400">
+                    <p>La <span class="text-rose-400 font-bold">Seguridad Térmica</span> cae críticamente durante el "Corte Motor" (14:00h-17:30h). Proteger ópticas.</p>
+                    <p>La <span class="text-amber-400 font-bold">Luz Natural</span> decae drásticamente a partir de las 21:30h, crucial para el clímax del eclipse.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="bloque1" class="mb-32 scroll-mt-24">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black text-teal-400 italic tracking-tight">BLOQUE I: EL DESPERTAR (Río)</h2>
+                <div class="block-divider bg-teal-400"></div>
+                <p class="text-slate-400 max-w-xl mx-auto italic">Secuencia 1: 12:00h a 14:00h. Inicio tras montaje.</p>
+            </div>
+            <div id="shots-b1" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="bloque2" class="mb-32 scroll-mt-24">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black text-amber-500 italic tracking-tight">BLOQUE II: LA TRAVESÍA</h2>
+                <div class="block-divider bg-amber-500"></div>
+                <p class="text-slate-400 max-w-xl mx-auto italic">Inicio Secuencia 2: 17:30h. Traslado y preparación completada.</p>
+            </div>
+            <div id="shots-b2" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="bloque3" class="mb-32 scroll-mt-24">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black text-indigo-500 italic tracking-tight">BLOQUE III: EL ECLIPSE</h2>
+                <div class="block-divider bg-indigo-500"></div>
+                <p class="text-slate-400 max-w-xl mx-auto italic">Diálogos y Clímax: 18:30h a 22:00h. Compresión máxima.</p>
+            </div>
+            <div class="card p-10 rounded-[2.5rem] mb-12 bg-slate-900 border-indigo-500/30">
+                <h4 class="text-2xl font-bold mb-6 text-center">Frecuencia de Focales</h4>
+                <div class="chart-container h-[350px]"><canvas id="opticsRadarChart"></canvas></div>
+            </div>
+            <div id="shots-b3" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section class="mb-32">
+            <div class="card p-10 rounded-[3rem] bg-gradient-to-br from-slate-900 to-indigo-950 border-none shadow-2xl">
+                <h3 class="text-3xl font-black mb-4">Compresión vs. Profundidad</h3>
+                <div id="dofPlot" class="w-full h-[450px]"></div>
+            </div>
+        </section>
+
+        <footer class="py-20 border-t border-slate-800 text-center">
+            <div class="text-3xl font-black italic mb-2 tracking-tighter">AP-7 <span class="text-indigo-500">STUDIOS</span></div>
+            <p class="text-slate-500 text-[10px] uppercase tracking-[0.5em] font-bold">Technical Dashboard V2.2 • Autosave Enabled</p>
+        </footer>
+    </div>
+
+    <script>
+        const wrapLabel = (label, limit = 16) => {
+            if (typeof label !== 'string' || label.length <= limit) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = "";
+            words.forEach(word => {
+                if ((currentLine + word).length > limit) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + " ";
+                } else {
+                    currentLine += word + " ";
+                }
+            });
+            lines.push(currentLine.trim());
+            return lines;
+        };
+
+        const tooltipConfig = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            return Array.isArray(label) ? label.join(' ') : label;
+                        }
+                    }
+                }
+            }
+        };
+
+        const shotsData = [
+            /* Bloque 1: Secuencia 1 (12:00 - 14:00) */
+            { id: "s3-p1", b: 1, s: 3, p: 1, lens: "20mm", type: "PG", color: "#14B8A6", time: "12:05", desc: "Héctor yace en el puente, oculto por vegetación.", audio: "Agua / Pájaros", script: "Sin diálogo" },
+            { id: "s3-p2", b: 1, s: 3, p: 2, lens: "50mm", type: "PML", color: "#14B8A6", time: "12:30", desc: "Cenital: Yace sobre el puente durmiendo.", audio: "Viento suave", script: "Sin diálogo" },
+            { id: "s3-p3", b: 1, s: 3, p: 3, lens: "70mm", type: "PD", color: "#14B8A6", time: "12:55", desc: "Mano del joven sobre el agua fría.", audio: "Splash / Agua", script: "Acción física" },
+            { id: "s3-p4", b: 1, s: 3, p: 4, lens: "50mm", type: "PP", color: "#14B8A6", time: "13:15", desc: "El joven abre los ojos.", audio: "Respiración", script: "Despertar" },
+            { id: "s3-p5", b: 1, s: 3, p: 5, lens: "20mm", type: "PG", color: "#14B8A6", time: "13:40", desc: "El joven se incorpora en el puente.", audio: "Foley madera", script: "Acción física" },
+            
+            /* Bloque 2: Inicio Secuencia 2 (17:30 - 18:30) */
+            { id: "s1-p1", b: 2, s: 1, p: 1, lens: "20mm", type: "GPG", color: "#F59E0B", time: "17:35", desc: "Dos colinas enfrentadas. Paisaje árido.", audio: "Ambiente desierto", script: "Establecimiento" },
+            { id: "s1-p2", b: 2, s: 1, p: 2, lens: "70mm", type: "PD", color: "#F59E0B", time: "17:50", desc: "Joven camina entre las montañas.", audio: "Música / Ambiente", script: "Caminante" },
+            { id: "s1-p3", b: 2, s: 1, p: 3, lens: "50mm", type: "PM", color: "#F59E0B", time: "18:05", desc: "Se abre paso entre dunas.", audio: "Pasos grava", script: "Travelling retro" },
+            { id: "s1-p4", b: 2, s: 1, p: 4, lens: "50mm", type: "PP", color: "#F59E0B", time: "18:15", desc: "Rostro cansado durante la travesía.", audio: "Respiración", script: "Travelling retro" },
+            { id: "s1-p5", b: 2, s: 1, p: 5, lens: "70mm", type: "PD", color: "#F59E0B", time: "18:25", desc: "Botas resuenan subiendo acantilado.", audio: "Golpe seco", script: "Fijo" },
+            
+            /* Bloque 3: Diálogos Secuencia 2 (18:30 - 22:00) */
+            { id: "s2-p1", b: 3, s: 2, p: 1, lens: "400mm", type: "PMC", color: "#6366F1", time: "18:35", desc: "Entra en plano, mira al horizonte.", audio: "Viento", script: "H: 'Otra vez aquí'" },
+            { id: "s2-p2", b: 3, s: 2, p: 2, lens: "600mm", type: "PP", color: "#6366F1", time: "18:42", desc: "Ella le observa desde la distancia.", audio: "Voz", script: "R: 'Una vez más'" },
+            { id: "s2-p3", b: 3, s: 2, p: 3, lens: "70mm", type: "PP", color: "#6366F1", time: "18:50", desc: "Se encoge de hombros, mira de reojo.", audio: "Voz", script: "H: 'Lo peor de esto...'" },
+            { id: "s2-p4", b: 3, s: 2, p: 4, lens: "400mm", type: "PM", color: "#6366F1", time: "19:00", desc: "Ella sonríe irónica, clava mirada.", audio: "Voz", script: "R: 'Ya siempre será así'" },
+            { id: "s2-p5", b: 3, s: 2, p: 5, lens: "400mm", type: "PM", color: "#6366F1", time: "19:08", desc: "Él se sienta, deja el candil.", audio: "Foley metal", script: "H: 'Exacto, pero no...'" },
+            { id: "s2-p6", b: 3, s: 2, p: 6, lens: "50mm", type: "PP", color: "#6366F1", time: "19:15", desc: "Subjetivo: Fija mirada en el sombrero.", audio: "Atmos", script: "Fijo" },
+            { id: "s2-p7", b: 3, s: 2, p: 7, lens: "200mm", type: "PML", color: "#6366F1", time: "19:25", desc: "Ella intenta consolarlo alzando mano.", audio: "Voz", script: "R: 'No quieres más...'" },
+            { id: "s2-p8", b: 3, s: 2, p: 8, lens: "600mm", type: "PP", color: "#6366F1", time: "19:32", desc: "Observa la gran distancia del precipicio.", audio: "Viento", script: "Subjetivo" },
+            { id: "s2-p9", b: 3, s: 2, p: 9, lens: "200mm", type: "PML", color: "#6366F1", time: "19:40", desc: "La joven alza su cabeza y suspira.", audio: "Suspiro", script: "Fijo" },
+            { id: "s2-p10", b: 3, s: 2, p: 10, lens: "400mm", type: "PP", color: "#6366F1", time: "19:50", desc: "Baja el sombrero, ojos húmedos.", audio: "Voz", script: "H: 'Pero no poder amarte...'" },
+            { id: "s2-p11", b: 3, s: 2, p: 11, lens: "200mm", type: "GPG", color: "#6366F1", time: "20:00", desc: "Sentado en el suelo terminando respuesta.", audio: "Voz", script: "H: 'Joder. Sé que lo mejor...'" },
+            { id: "s2-p12", b: 3, s: 2, p: 12, lens: "400mm", type: "PMC", color: "#6366F1", time: "20:08", desc: "Observa mientras él habla. Ojos nostálgicos.", audio: "Voz", script: "R: 'Solo bastaba con verte...'" },
+            { id: "s2-p13", b: 3, s: 2, p: 13, lens: "200mm", type: "PD", color: "#6366F1", time: "20:15", desc: "Mira hacia el sombrero apoyándolo.", audio: "Voz", script: "H: 'Ahora no tengo ganas...'" },
+            { id: "s2-p14", b: 3, s: 2, p: 14, lens: "400mm", type: "PMC", color: "#6366F1", time: "20:25", desc: "Agotado de solo soñarte.", audio: "Voz", script: "H: 'Y pese a eso...'" },
+            { id: "s2-p15", b: 3, s: 2, p: 15, lens: "200mm", type: "PML", color: "#6366F1", time: "20:32", desc: "Réplica serena de ella.", audio: "Voz", script: "R: 'Todo irá bien...'" },
+            { id: "s2-p16", b: 3, s: 2, p: 16, lens: "400mm", type: "PP", color: "#6366F1", time: "20:40", desc: "Sopesa las palabras. ¿Sigo soñando?", audio: "Voz", script: "H: 'Aún no sé si sigo soñando...'" },
+            { id: "s2-p17", b: 3, s: 2, p: 17, lens: "200mm", type: "PG", color: "#6366F1", time: "20:50", desc: "Ella le observa soberbia mientras él sube.", audio: "Ambiente", script: "Acción física" },
+            { id: "s2-p18", b: 3, s: 2, p: 18, lens: "200mm", type: "PG", color: "#6366F1", time: "21:00", desc: "Se levanta y se coloca el sombrero.", audio: "Ambiente", script: "Acción física" },
+            { id: "s2-p19", b: 3, s: 2, p: 19, lens: "400mm", type: "PP", color: "#6366F1", time: "21:10", desc: "Actitud seria. Lágrima en rostro.", audio: "Respiración", script: "R: '¿No ves que no era justo?'" },
+            { id: "s2-p20", b: 3, s: 2, p: 20, lens: "400mm", type: "PP", color: "#6366F1", time: "21:20", desc: "Sostiene su mirada. Nostálgico firme.", audio: "Viento", script: "Acción física" },
+            { id: "s2-p21", b: 3, s: 2, p: 21, lens: "600mm", type: "PPP", color: "#6366F1", time: "21:30", desc: "Sentencia final comprimida.", audio: "Voz", script: "H: 'Nadie merece necesitar...'" },
+            { id: "s2-p22", b: 3, s: 2, p: 22, lens: "50mm", type: "PD", color: "#6366F1", time: "21:45", desc: "La chica enciende el candil.", audio: "Click chispa", script: "Luz práctica" },
+            { id: "s2-p23", b: 3, s: 2, p: 23, lens: "200mm", type: "PD", color: "#6366F1", time: "21:55", desc: "Ojo refleja el eclipse solar.", audio: "Síncope", script: "Clímax visual" }
+        ];
+
+        let progress = JSON.parse(localStorage.getItem('miel_shot_progress') || '{}');
+
+        function toggleShotStatus(id, event) {
+            event.stopPropagation();
+            progress[id] = !progress[id];
+            localStorage.setItem('miel_shot_progress', JSON.stringify(progress));
+            document.getElementById(`card-${id}`).classList.toggle('is-recorded', progress[id]);
+        }
+
+        function renderShots() {
+            const b1 = document.getElementById('shots-b1');
+            const b2 = document.getElementById('shots-b2');
+            const b3 = document.getElementById('shots-b3');
+            
+            shotsData.forEach(shot => {
+                const isRecorded = progress[shot.id] ? 'is-recorded' : '';
+                const card = document.createElement('div');
+                card.id = `card-${shot.id}`;
+                card.className = `card p-5 rounded-2xl shot-card relative overflow-hidden ${isRecorded}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">PLANO ${shot.p}</span>
+                            <h4 class="text-xl font-black italic" style="color: ${shot.color}">${shot.lens}</h4>
+                        </div>
+                        <div class="text-right">
+                             <div class="text-[10px] font-bold text-white mb-1">${shot.time}h</div>
+                             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border" style="border-color: ${shot.color}44; color: ${shot.color}">${shot.type}</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-300 line-clamp-2 mb-4">${shot.desc}</p>
+                    
+                    <button onclick="toggleShotStatus('${shot.id}', event)" class="record-toggle w-full py-2 mb-2 border border-slate-700 rounded-lg text-[9px] font-black tracking-widest text-slate-500 uppercase">
+                        MARCAR COMO GRABADO
+                    </button>
+
+                    <div class="shot-details border-t border-slate-700 pt-3">
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mb-1">Guion / Nota</p>
+                        <p class="text-[10px] text-white italic mb-2">${shot.script}</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mb-1">Captura Audio</p>
+                        <p class="text-[10px] text-slate-400">${shot.audio}</p>
+                    </div>
+                `;
+                card.onclick = function() {
+                    const active = this.classList.contains('active');
+                    document.querySelectorAll('.shot-card').forEach(c => c.classList.remove('active'));
+                    if (!active) this.classList.add('active');
+                };
+                if (shot.b === 1) b1.appendChild(card);
+                else if (shot.b === 2) b2.appendChild(card);
+                else b3.appendChild(card);
+            });
+        }
+
+        function initCharts() {
+            const hours = ['11:00', '13:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+            
+            new Chart(document.getElementById('thermalLightChart'), {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Seguridad Térmica (%)',
+                            data: [95, 80, 40, 35, 60, 85, 95],
+                            borderColor: '#F43F5E',
+                            backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Luz Natural (%)',
+                            data: [80, 100, 100, 90, 70, 20, 0],
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { 
+                        legend: { labels: { color: '#94a3b8', font: { size: 12, weight: 'bold' } } },
+                        tooltip: tooltipConfig.plugins.tooltip 
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, max: 100, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            const lensFreq = { "20mm": 3, "50mm": 6, "70mm": 3, "200mm": 8, "400mm": 9, "600mm": 4 };
+            new Chart(document.getElementById('globalLensChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(lensFreq),
+                    datasets: [{
+                        data: Object.values(lensFreq),
+                        backgroundColor: ['#14B8A6', '#14B8A6', '#F59E0B', '#6366F1', '#6366F1', '#6366F1'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: tooltipConfig.plugins.tooltip },
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#f8fafc' } }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('opticsRadarChart'), {
+                type: 'radar',
+                data: {
+                    labels: ['Normal (50/70mm)', 'Tele 200mm', 'Tele 400mm', 'Tele 600mm'],
+                    datasets: [{
+                        label: 'Impacto Visual',
+                        data: [2, 8, 9, 4],
+                        borderColor: '#6366F1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        pointBackgroundColor: '#F59E0B'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: { grid: { color: '#334155' }, angleLines: { color: '#334155' }, pointLabels: { color: '#94a3b8' }, ticks: { display: false } }
+                    },
+                    plugins: { tooltip: tooltipConfig.plugins.tooltip }
+                }
+            });
+        }
+
+        function initPlotly() {
+            const mm = [20, 50, 70, 200, 400, 600];
+            const dof = [10, 4, 2, 0.5, 0.2, 0.05];
+            Plotly.newPlot('dofPlot', [{
+                x: mm, y: dof, type: 'scatter', mode: 'lines+markers',
+                line: { color: '#6366F1', shape: 'spline', width: 4 },
+                marker: { color: '#F59E0B', size: 10 },
+                fill: 'tozeroy', fillcolor: 'rgba(99, 102, 241, 0.1)'
+            }], {
+                paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+                margin: { t: 40, b: 60, l: 60, r: 40 },
+                title: { text: 'Compresión Espacial vs Focal', font: { color: '#f8fafc', size: 16 } },
+                xaxis: { title: 'Distancia Focal (mm)', gridcolor: '#1e293b', tickfont: { color: '#94a3b8' } },
+                yaxis: { title: 'Profundidad de Campo Relativa', gridcolor: '#1e293b', tickfont: { color: '#94a3b8' } }
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        window.onload = () => {
+            renderShots();
+            initCharts();
+            initPlotly();
+        };
+    </script>
+</body>
+</html>

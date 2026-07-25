@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -96,6 +96,74 @@
             background-color: #10B981;
             color: white;
         }
+
+        /* Custom Table Styling for Plan de Rodaje */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 1rem;
+            border: 1px solid #334155;
+        }
+
+        table.rodaje-table {
+            width: 100%;
+            text-align: left;
+            border-collapse: collapse;
+            font-size: 0.825rem;
+        }
+
+        table.rodaje-table th {
+            background-color: #0F172A;
+            color: #94A3B8;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid #334155;
+            white-space: nowrap;
+        }
+
+        table.rodaje-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #334155;
+            color: #E2E8F0;
+        }
+
+        table.rodaje-table tr:hover {
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+
+        .tag-lens {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 800;
+            font-size: 0.75rem;
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #818CF8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .tag-tipo {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .tag-pj {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #FBBF24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -112,12 +180,13 @@
             </p>
         </header>
 
-        <nav class="sticky-nav flex justify-center gap-4 mb-20 p-2 rounded-full border border-slate-800 shadow-2xl">
-            <a href="#global" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors text-slate-400">Datos</a>
-            <a href="#ambiente" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-rose-400 transition-colors text-slate-400">Seguridad</a>
-            <a href="#bloque1" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-teal-400 transition-colors text-slate-400">Río</a>
-            <a href="#bloque2" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-amber-500 transition-colors text-slate-400">Travesía</a>
-            <a href="#bloque3" class="px-6 py-2 text-xs font-bold uppercase tracking-widest hover:text-indigo-400 transition-colors text-slate-400">Eclipse</a>
+        <nav class="sticky-nav flex flex-wrap justify-center gap-2 md:gap-4 mb-20 p-2 rounded-2xl md:rounded-full border border-slate-800 shadow-2xl">
+            <a href="#global" class="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors text-slate-400">Datos</a>
+            <a href="#ambiente" class="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:text-rose-400 transition-colors text-slate-400">Seguridad</a>
+            <a href="#planrodaje" class="px-4 py-2 text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 rounded-full border border-indigo-500/30">Plan de Rodaje</a>
+            <a href="#bloque1" class="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:text-teal-400 transition-colors text-slate-400">Río</a>
+            <a href="#bloque2" class="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:text-amber-500 transition-colors text-slate-400">Travesía</a>
+            <a href="#bloque3" class="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:text-indigo-400 transition-colors text-slate-400">Eclipse</a>
         </nav>
 
         <section id="global" class="mb-32">
@@ -153,11 +222,718 @@
             </div>
         </section>
 
+        <section id="planrodaje" class="mb-32 scroll-mt-24">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-1 mb-3 text-xs font-bold uppercase tracking-widest bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-500/30">
+                    Desglose Técnico Horario
+                </div>
+                <h2 class="text-4xl md:text-6xl font-black italic tracking-tight text-white">
+                    5. PLAN DE RODAJE OPTIMIZADO <span class="text-indigo-400">(PLANO A PLANO)</span>
+                </h2>
+                <div class="block-divider bg-indigo-500"></div>
+                <p class="text-slate-400 max-w-2xl mx-auto italic">
+                    Secuencia cronológica detallada por bloques, ópticas, ángulos y cobertura de personajes.
+                </p>
+            </div>
+
+            <div class="space-y-12">
+                <!-- BLOQUE 1 TABLE -->
+                <div class="card p-6 md:p-8 rounded-[2.5rem] bg-slate-900/90 border-teal-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <span class="text-xs font-black uppercase text-teal-400 tracking-wider">Bloque 01</span>
+                            <h3 class="text-2xl font-black text-white italic">EXT. RÍO CHÍCAMO (12:00 h – 14:00 h)</h3>
+                        </div>
+                        <div class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700 text-xs">
+                            <span class="text-slate-400 font-bold">Personajes en set:</span> <span class="text-teal-300 font-extrabold">Héctor Marín</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="rodaje-table">
+                            <thead>
+                                <tr>
+                                    <th>Hora Est.</th>
+                                    <th>Ord.</th>
+                                    <th>Sec.</th>
+                                    <th>Plano</th>
+                                    <th>Óptica</th>
+                                    <th>Tipo</th>
+                                    <th>Ángulo / Movimiento</th>
+                                    <th>Descripción / Setup</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row-s3-p1" class="transition-colors">
+                                    <td class="font-bold text-teal-400">12:00 h</td>
+                                    <td>1°</td>
+                                    <td>3</td>
+                                    <td class="font-bold">1</td>
+                                    <td><span class="tag-lens">24mm</span></td>
+                                    <td><span class="tag-tipo">PG</span></td>
+                                    <td>Neutra / Frontal</td>
+                                    <td>Yace en el puente entre la vegetación. Setup Angular 1.</td>
+                                    <td>
+                                        <button id="btn-s3-p1" onclick="toggleShotStatus('s3-p1', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s3-p2" class="transition-colors">
+                                    <td class="font-bold text-teal-400">12:25 h</td>
+                                    <td>2°</td>
+                                    <td>3</td>
+                                    <td class="font-bold">5</td>
+                                    <td><span class="tag-lens">28mm</span></td>
+                                    <td><span class="tag-tipo">PG</span></td>
+                                    <td>Neutra / Panorámica</td>
+                                    <td>Se incorpora y contempla el entorno. Setup Angular 2.</td>
+                                    <td>
+                                        <button id="btn-s3-p2" onclick="toggleShotStatus('s3-p2', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s3-p3" class="transition-colors">
+                                    <td class="font-bold text-teal-400">12:45 h</td>
+                                    <td>3°</td>
+                                    <td>3</td>
+                                    <td class="font-bold">2</td>
+                                    <td><span class="tag-lens">35mm</span></td>
+                                    <td><span class="tag-tipo">PML</span></td>
+                                    <td>Cenital / Descendente</td>
+                                    <td>Dormido sobre la madera. Setup Cenital en puente.</td>
+                                    <td>
+                                        <button id="btn-s3-p3" onclick="toggleShotStatus('s3-p3', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s3-p4" class="transition-colors">
+                                    <td class="font-bold text-teal-400">13:15 h</td>
+                                    <td>4°</td>
+                                    <td>3</td>
+                                    <td class="font-bold">4</td>
+                                    <td><span class="tag-lens">50mm</span></td>
+                                    <td><span class="tag-tipo">PP</span></td>
+                                    <td>Neutra / Frontal</td>
+                                    <td>Abre los ojos serenamente. Retrato de rostro.</td>
+                                    <td>
+                                        <button id="btn-s3-p4" onclick="toggleShotStatus('s3-p4', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s3-p5" class="transition-colors">
+                                    <td class="font-bold text-teal-400">13:35 h</td>
+                                    <td>5°</td>
+                                    <td>3</td>
+                                    <td class="font-bold">3</td>
+                                    <td><span class="tag-lens">85mm</span></td>
+                                    <td><span class="tag-tipo">PD</span></td>
+                                    <td>Suelo / Lateral</td>
+                                    <td>Mano tocando agua fría. Macro/Detalle de textura.</td>
+                                    <td>
+                                        <button id="btn-s3-p5" onclick="toggleShotStatus('s3-p5', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAUSE BANNER -->
+                <div class="card p-6 rounded-2xl bg-rose-500/10 border-2 border-rose-500/40 text-center shadow-lg">
+                    <p class="text-base md:text-lg font-black text-rose-400 uppercase tracking-widest flex items-center justify-center gap-3">
+                        <span class="text-2xl">🛑</span>
+                        14:00 h – 17:30 h | CORTE A MOTOR — COMIDA Y DESCANSO TÉCNICO
+                    </p>
+                </div>
+
+                <!-- BLOQUE 2 TABLE -->
+                <div class="card p-6 md:p-8 rounded-[2.5rem] bg-slate-900/90 border-amber-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <span class="text-xs font-black uppercase text-amber-500 tracking-wider">Bloque 02</span>
+                            <h3 class="text-2xl font-black text-white italic">EXT. DESIERTO DE ABANILLA — TRAVESÍA SOLO (17:30 h – 18:30 h)</h3>
+                        </div>
+                        <div class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700 text-xs">
+                            <span class="text-slate-400 font-bold">Personajes en set:</span> <span class="text-amber-400 font-extrabold">Héctor Marín</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="rodaje-table">
+                            <thead>
+                                <tr>
+                                    <th>Hora Est.</th>
+                                    <th>Ord.</th>
+                                    <th>Sec.</th>
+                                    <th>Plano</th>
+                                    <th>Óptica</th>
+                                    <th>Tipo</th>
+                                    <th>Ángulo / Movimiento</th>
+                                    <th>Descripción / Setup</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row-s1-p1" class="transition-colors">
+                                    <td class="font-bold text-amber-400">17:30 h</td>
+                                    <td>1°</td>
+                                    <td>1</td>
+                                    <td class="font-bold">1</td>
+                                    <td><span class="tag-lens">20mm</span></td>
+                                    <td><span class="tag-tipo">GPG</span></td>
+                                    <td>Estático / Colinas</td>
+                                    <td>Dos colinas enfrentadas. Captura de paisaje amplio.</td>
+                                    <td>
+                                        <button id="btn-s1-p1" onclick="toggleShotStatus('s1-p1', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s1-p2" class="transition-colors">
+                                    <td class="font-bold text-amber-400">17:42 h</td>
+                                    <td>2°</td>
+                                    <td>1</td>
+                                    <td class="font-bold">3</td>
+                                    <td><span class="tag-lens">50mm</span></td>
+                                    <td><span class="tag-tipo">PM</span></td>
+                                    <td>Travelling retroceso</td>
+                                    <td>Abre paso entre dunas. Tracking marcha atrás.</td>
+                                    <td>
+                                        <button id="btn-s1-p2" onclick="toggleShotStatus('s1-p2', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s1-p3" class="transition-colors">
+                                    <td class="font-bold text-amber-400">17:55 h</td>
+                                    <td>3°</td>
+                                    <td>1</td>
+                                    <td class="font-bold">4</td>
+                                    <td><span class="tag-lens">50mm</span></td>
+                                    <td><span class="tag-tipo">PP</span></td>
+                                    <td>Travelling retroceso</td>
+                                    <td>Rostro cansado. Mismo recorrido, encuadre cerrado.</td>
+                                    <td>
+                                        <button id="btn-s1-p3" onclick="toggleShotStatus('s1-p3', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s1-p4" class="transition-colors">
+                                    <td class="font-bold text-amber-400">18:08 h</td>
+                                    <td>4°</td>
+                                    <td>1</td>
+                                    <td class="font-bold">2</td>
+                                    <td><span class="tag-lens">70mm</span></td>
+                                    <td><span class="tag-tipo">PD</span></td>
+                                    <td>Movimiento natural</td>
+                                    <td>Camina entre montañas áridas. Tele corto 1.</td>
+                                    <td>
+                                        <button id="btn-s1-p4" onclick="toggleShotStatus('s1-p4', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="row-s1-p5" class="transition-colors">
+                                    <td class="font-bold text-amber-400">18:18 h</td>
+                                    <td>5°</td>
+                                    <td>1</td>
+                                    <td class="font-bold">5</td>
+                                    <td><span class="tag-lens">70mm</span></td>
+                                    <td><span class="tag-tipo">PD</span></td>
+                                    <td>Contrapicado / Suelo</td>
+                                    <td>Botas resuenan subiendo acantilado. Tele corto 2.</td>
+                                    <td>
+                                        <button id="btn-s1-p5" onclick="toggleShotStatus('s1-p5', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                            <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 3 TABLE -->
+                <div class="card p-6 md:p-8 rounded-[2.5rem] bg-slate-900/90 border-indigo-500/30 space-y-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="text-xs font-black uppercase text-indigo-400 tracking-wider">Bloque 03</span>
+                            <h3 class="text-2xl font-black text-white italic">EXT. DESIERTO DE ABANILLA — ECLIPSE Y CONFRONTACIÓN (18:30 h – 22:00 h)</h3>
+                        </div>
+                        <div class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700 text-xs">
+                            <span class="text-slate-400 font-bold">Personajes en set:</span> <span class="text-indigo-300 font-extrabold">Héctor Marín & Raquel Moreno</span>
+                        </div>
+                    </div>
+
+                    <!-- Grupo A -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                            Grupo A: Planos Generales y Establecimiento (Luz Alta Tarde)
+                        </h4>
+                        <div class="table-container">
+                            <table class="rodaje-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hora Est.</th>
+                                        <th>Ord.</th>
+                                        <th>Sec.</th>
+                                        <th>Plano</th>
+                                        <th>Óptica</th>
+                                        <th>Tipo</th>
+                                        <th>Personaje</th>
+                                        <th>Acción / Diálogo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-s2-p1" class="transition-colors">
+                                        <td class="font-bold text-indigo-400">18:30 h</td>
+                                        <td>1°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">1</td>
+                                        <td><span class="tag-lens">200mm</span></td>
+                                        <td><span class="tag-tipo">PG–PMC</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Zoom in: Entra por izquierda, mira al horizonte.</td>
+                                        <td>
+                                            <button id="btn-s2-p1" onclick="toggleShotStatus('s2-p1', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p2" class="transition-colors">
+                                        <td class="font-bold text-indigo-400">18:38 h</td>
+                                        <td>2°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">11</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">GPG</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Sentado en el suelo: <span class="italic text-slate-300">"Joder, sé que lo mejor..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p2" onclick="toggleShotStatus('s2-p2', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p3" class="transition-colors">
+                                        <td class="font-bold text-indigo-400">18:45 h</td>
+                                        <td>3°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">17</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PG</span></td>
+                                        <td><span class="tag-pj">Ambos</span></td>
+                                        <td>Ella le observa soberbia mientras él se levanta.</td>
+                                        <td>
+                                            <button id="btn-s2-p3" onclick="toggleShotStatus('s2-p3', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p4" class="transition-colors">
+                                        <td class="font-bold text-indigo-400">18:52 h</td>
+                                        <td>4°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">18</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PG</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Se levanta, se coloca el sombrero y afronta la mirada.</td>
+                                        <td>
+                                            <button id="btn-s2-p4" onclick="toggleShotStatus('s2-p4', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Grupo B -->
+                    <div class="space-y-3 pt-4 border-t border-slate-800">
+                        <h4 class="text-sm font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                            Grupo B: Campo Cobertura Raquel Moreno (Setup Tele / Hora Dorada)
+                        </h4>
+                        <div class="table-container">
+                            <table class="rodaje-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hora Est.</th>
+                                        <th>Ord.</th>
+                                        <th>Sec.</th>
+                                        <th>Plano</th>
+                                        <th>Óptica</th>
+                                        <th>Tipo</th>
+                                        <th>Personaje</th>
+                                        <th>Acción / Diálogo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-s2-p5" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:00 h</td>
+                                        <td>5°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">2</td>
+                                        <td><span class="tag-lens">200mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Le observa en la distancia: <span class="italic text-slate-300">"Una vez más".</span></td>
+                                        <td>
+                                            <button id="btn-s2-p5" onclick="toggleShotStatus('s2-p5', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p6" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:07 h</td>
+                                        <td>6°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">4</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PM</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Sonríe irónica: <span class="italic text-slate-300">"Ya siempre será así, asúmelo".</span></td>
+                                        <td>
+                                            <button id="btn-s2-p6" onclick="toggleShotStatus('s2-p6', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p7" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:14 h</td>
+                                        <td>7°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">7</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PML</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Intenta consolarlo: <span class="italic text-slate-300">"No quieres más mentiras".</span></td>
+                                        <td>
+                                            <button id="btn-s2-p7" onclick="toggleShotStatus('s2-p7', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p8" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:21 h</td>
+                                        <td>8°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">9</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PML</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Alza la cabeza para observarlo y suspira.</td>
+                                        <td>
+                                            <button id="btn-s2-p8" onclick="toggleShotStatus('s2-p8', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p9" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:28 h</td>
+                                        <td>9°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">12</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PMC</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Pasa de nostálgica a leve sonrisa.</td>
+                                        <td>
+                                            <button id="btn-s2-p9" onclick="toggleShotStatus('s2-p9', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p10" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:35 h</td>
+                                        <td>10°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">15</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PML</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Réplica serena: <span class="italic text-slate-300">"Todo irá bien, poco a poco..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p10" onclick="toggleShotStatus('s2-p10', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p11" class="transition-colors">
+                                        <td class="font-bold text-amber-400">19:42 h</td>
+                                        <td>11°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">19</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Raquel</span></td>
+                                        <td>Sentencia con lágrima: <span class="italic text-slate-300">"¿No ves que no era justo?..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p11" onclick="toggleShotStatus('s2-p11', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Grupo C -->
+                    <div class="space-y-3 pt-4 border-t border-slate-800">
+                        <h4 class="text-sm font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                            Grupo C: Campo Cobertura Héctor Marín (Giro 180° / Atardecer)
+                        </h4>
+                        <div class="table-container">
+                            <table class="rodaje-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hora Est.</th>
+                                        <th>Ord.</th>
+                                        <th>Sec.</th>
+                                        <th>Plano</th>
+                                        <th>Óptica</th>
+                                        <th>Tipo</th>
+                                        <th>Personaje</th>
+                                        <th>Acción / Diálogo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-s2-p12" class="transition-colors">
+                                        <td class="font-bold text-rose-400">19:50 h</td>
+                                        <td>12°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">3</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Hablando para sí: <span class="italic text-slate-300">"Lo peor de esto es que me tengo..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p12" onclick="toggleShotStatus('s2-p12', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p13" class="transition-colors">
+                                        <td class="font-bold text-rose-400">19:56 h</td>
+                                        <td>13°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">5</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PM</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Deja candil, quita sombrero: <span class="italic text-slate-300">"Exacto, pero no..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p13" onclick="toggleShotStatus('s2-p13', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p14" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:02 h</td>
+                                        <td>14°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">10</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Baja el sombrero con ojos húmedos: <span class="italic text-slate-300">"Pero no poder..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p14" onclick="toggleShotStatus('s2-p14', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p15" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:08 h</td>
+                                        <td>15°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">13</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PD / Subj.</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Mira hacia el sombrero: <span class="italic text-slate-300">"Ahora no tengo ganas..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p15" onclick="toggleShotStatus('s2-p15', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p16" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:14 h</td>
+                                        <td>16°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">14</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PMC</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Continuación diálogo: <span class="italic text-slate-300">"Y pese a eso, sigo agotado..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p16" onclick="toggleShotStatus('s2-p16', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p17" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:20 h</td>
+                                        <td>17°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">16</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Sopesa palabras: <span class="italic text-slate-300">"Aún no sé si sigo soñando..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p17" onclick="toggleShotStatus('s2-p17', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p18" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:26 h</td>
+                                        <td>18°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">20</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Sostiene la mirada. Nostálgico pero firme.</td>
+                                        <td>
+                                            <button id="btn-s2-p18" onclick="toggleShotStatus('s2-p18', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p19" class="transition-colors">
+                                        <td class="font-bold text-rose-400">20:32 h</td>
+                                        <td>19°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">21</td>
+                                        <td><span class="tag-lens">135mm</span></td>
+                                        <td><span class="tag-tipo">PPP</span></td>
+                                        <td><span class="tag-pj">Héctor</span></td>
+                                        <td>Sentencia: <span class="italic text-slate-300">"Nadie merece necesitar a otro..."</span></td>
+                                        <td>
+                                            <button id="btn-s2-p19" onclick="toggleShotStatus('s2-p19', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Grupo D -->
+                    <div class="space-y-3 pt-4 border-t border-slate-800">
+                        <h4 class="text-sm font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+                            Grupo D: Insertos, Subjetivos y Clímax Simbólico (Twilight y Luz Práctica)
+                        </h4>
+                        <div class="table-container">
+                            <table class="rodaje-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hora Est.</th>
+                                        <th>Ord.</th>
+                                        <th>Sec.</th>
+                                        <th>Plano</th>
+                                        <th>Óptica</th>
+                                        <th>Tipo</th>
+                                        <th>Detalle</th>
+                                        <th>Descripción / Efecto</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-s2-p20" class="transition-colors">
+                                        <td class="font-bold text-teal-400">20:40 h</td>
+                                        <td>20°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">6</td>
+                                        <td><span class="tag-lens">50mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td>Subjetivo</td>
+                                        <td>Sombrero contrapicado desde el suelo.</td>
+                                        <td>
+                                            <button id="btn-s2-p20" onclick="toggleShotStatus('s2-p20', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p21" class="transition-colors">
+                                        <td class="font-bold text-teal-400">21:00 h</td>
+                                        <td>21°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">8</td>
+                                        <td><span class="tag-lens">85mm</span></td>
+                                        <td><span class="tag-tipo">PP</span></td>
+                                        <td>Subjetivo</td>
+                                        <td>Gran distancia del precipicio.</td>
+                                        <td>
+                                            <button id="btn-s2-p21" onclick="toggleShotStatus('s2-p21', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p22" class="transition-colors">
+                                        <td class="font-bold text-teal-400">21:20 h</td>
+                                        <td>22°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">22</td>
+                                        <td><span class="tag-lens">50mm Macro</span></td>
+                                        <td><span class="tag-tipo">PD</span></td>
+                                        <td>Candil</td>
+                                        <td>La chica enciende el candil (Luz práctica).</td>
+                                        <td>
+                                            <button id="btn-s2-p22" onclick="toggleShotStatus('s2-p22', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-s2-p23" class="transition-colors">
+                                        <td class="font-bold text-teal-400">21:40 h</td>
+                                        <td>23°</td>
+                                        <td>2</td>
+                                        <td class="font-bold">23</td>
+                                        <td><span class="tag-lens">85mm Macro</span></td>
+                                        <td><span class="tag-tipo">PD</span></td>
+                                        <td>Ojo / Eclipse</td>
+                                        <td>Reflejo del eclipse en el ojo (Macro de precisión).</td>
+                                        <td>
+                                            <button id="btn-s2-p23" onclick="toggleShotStatus('s2-p23', event)" class="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                                <span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="bloque1" class="mb-32 scroll-mt-24">
             <div class="text-center mb-16">
                 <h2 class="text-5xl font-black text-teal-400 italic tracking-tight">BLOQUE I: EL DESPERTAR (Río)</h2>
                 <div class="block-divider bg-teal-400"></div>
-                <p class="text-slate-400 max-w-xl mx-auto italic">Secuencia 1: 12:00h a 14:00h. Inicio tras montaje.</p>
+                <p class="text-slate-400 max-w-xl mx-auto italic">Secuencia 3: 12:00h a 14:00h. Inicio tras montaje.</p>
             </div>
             <div id="shots-b1" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
@@ -166,7 +942,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-5xl font-black text-amber-500 italic tracking-tight">BLOQUE II: LA TRAVESÍA</h2>
                 <div class="block-divider bg-amber-500"></div>
-                <p class="text-slate-400 max-w-xl mx-auto italic">Inicio Secuencia 2: 17:30h. Traslado y preparación completada.</p>
+                <p class="text-slate-400 max-w-xl mx-auto italic">Inicio Secuencia 1: 17:30h. Traslado y preparación completada.</p>
             </div>
             <div id="shots-b2" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
@@ -230,53 +1006,88 @@
         };
 
         const shotsData = [
-            /* Bloque 1: Secuencia 1 (12:00 - 14:00) */
-            { id: "s3-p1", b: 1, s: 3, p: 1, lens: "20mm", type: "PG", color: "#14B8A6", time: "12:05", desc: "Héctor yace en el puente, oculto por vegetación.", audio: "Agua / Pájaros", script: "Sin diálogo" },
-            { id: "s3-p2", b: 1, s: 3, p: 2, lens: "50mm", type: "PML", color: "#14B8A6", time: "12:30", desc: "Cenital: Yace sobre el puente durmiendo.", audio: "Viento suave", script: "Sin diálogo" },
-            { id: "s3-p3", b: 1, s: 3, p: 3, lens: "70mm", type: "PD", color: "#14B8A6", time: "12:55", desc: "Mano del joven sobre el agua fría.", audio: "Splash / Agua", script: "Acción física" },
-            { id: "s3-p4", b: 1, s: 3, p: 4, lens: "50mm", type: "PP", color: "#14B8A6", time: "13:15", desc: "El joven abre los ojos.", audio: "Respiración", script: "Despertar" },
-            { id: "s3-p5", b: 1, s: 3, p: 5, lens: "20mm", type: "PG", color: "#14B8A6", time: "13:40", desc: "El joven se incorpora en el puente.", audio: "Foley madera", script: "Acción física" },
+            /* Bloque 1: Secuencia 3 (12:00 - 14:00) */
+            { id: "s3-p1", b: 1, s: 3, p: 1, lens: "24mm", type: "PG", color: "#14B8A6", time: "12:00", desc: "Héctor yace en el puente, oculto por vegetación.", audio: "Agua / Pájaros", script: "Sin diálogo" },
+            { id: "s3-p2", b: 1, s: 3, p: 5, lens: "28mm", type: "PG", color: "#14B8A6", time: "12:25", desc: "Se incorpora y contempla el entorno.", audio: "Viento suave", script: "Sin diálogo" },
+            { id: "s3-p3", b: 1, s: 3, p: 2, lens: "35mm", type: "PML", color: "#14B8A6", time: "12:45", desc: "Cenital: Dormido sobre la madera.", audio: "Ambiente río", script: "Sin diálogo" },
+            { id: "s3-p4", b: 1, s: 3, p: 4, lens: "50mm", type: "PP", color: "#14B8A6", time: "13:15", desc: "El joven abre los ojos serenamente.", audio: "Respiración", script: "Despertar" },
+            { id: "s3-p5", b: 1, s: 3, p: 3, lens: "85mm", type: "PD", color: "#14B8A6", time: "13:35", desc: "Mano del joven tocando agua fría.", audio: "Splash / Agua", script: "Acción física" },
             
-            /* Bloque 2: Inicio Secuencia 2 (17:30 - 18:30) */
-            { id: "s1-p1", b: 2, s: 1, p: 1, lens: "20mm", type: "GPG", color: "#F59E0B", time: "17:35", desc: "Dos colinas enfrentadas. Paisaje árido.", audio: "Ambiente desierto", script: "Establecimiento" },
-            { id: "s1-p2", b: 2, s: 1, p: 2, lens: "70mm", type: "PD", color: "#F59E0B", time: "17:50", desc: "Joven camina entre las montañas.", audio: "Música / Ambiente", script: "Caminante" },
-            { id: "s1-p3", b: 2, s: 1, p: 3, lens: "50mm", type: "PM", color: "#F59E0B", time: "18:05", desc: "Se abre paso entre dunas.", audio: "Pasos grava", script: "Travelling retro" },
-            { id: "s1-p4", b: 2, s: 1, p: 4, lens: "50mm", type: "PP", color: "#F59E0B", time: "18:15", desc: "Rostro cansado durante la travesía.", audio: "Respiración", script: "Travelling retro" },
-            { id: "s1-p5", b: 2, s: 1, p: 5, lens: "70mm", type: "PD", color: "#F59E0B", time: "18:25", desc: "Botas resuenan subiendo acantilado.", audio: "Golpe seco", script: "Fijo" },
+            /* Bloque 2: Inicio Secuencia 1 (17:30 - 18:30) */
+            { id: "s1-p1", b: 2, s: 1, p: 1, lens: "20mm", type: "GPG", color: "#F59E0B", time: "17:30", desc: "Dos colinas enfrentadas. Paisaje árido.", audio: "Ambiente desierto", script: "Establecimiento" },
+            { id: "s1-p2", b: 2, s: 1, p: 3, lens: "50mm", type: "PM", color: "#F59E0B", time: "17:42", desc: "Abre paso entre dunas.", audio: "Pasos duna", script: "Travelling retro" },
+            { id: "s1-p3", b: 2, s: 1, p: 4, lens: "50mm", type: "PP", color: "#F59E0B", time: "17:55", desc: "Rostro cansado durante la travesía.", audio: "Respiración", script: "Travelling retro" },
+            { id: "s1-p4", b: 2, s: 1, p: 2, lens: "70mm", type: "PD", color: "#F59E0B", time: "18:08", desc: "Camina entre montañas áridas.", audio: "Música / Viento", script: "Caminante" },
+            { id: "s1-p5", b: 2, s: 1, p: 5, lens: "70mm", type: "PD", color: "#F59E0B", time: "18:18", desc: "Botas resuenan subiendo acantilado.", audio: "Golpe seco", script: "Contrapicado suelo" },
             
             /* Bloque 3: Diálogos Secuencia 2 (18:30 - 22:00) */
-            { id: "s2-p1", b: 3, s: 2, p: 1, lens: "400mm", type: "PMC", color: "#6366F1", time: "18:35", desc: "Entra en plano, mira al horizonte.", audio: "Viento", script: "H: 'Otra vez aquí'" },
-            { id: "s2-p2", b: 3, s: 2, p: 2, lens: "600mm", type: "PP", color: "#6366F1", time: "18:42", desc: "Ella le observa desde la distancia.", audio: "Voz", script: "R: 'Una vez más'" },
-            { id: "s2-p3", b: 3, s: 2, p: 3, lens: "70mm", type: "PP", color: "#6366F1", time: "18:50", desc: "Se encoge de hombros, mira de reojo.", audio: "Voz", script: "H: 'Lo peor de esto...'" },
-            { id: "s2-p4", b: 3, s: 2, p: 4, lens: "400mm", type: "PM", color: "#6366F1", time: "19:00", desc: "Ella sonríe irónica, clava mirada.", audio: "Voz", script: "R: 'Ya siempre será así'" },
-            { id: "s2-p5", b: 3, s: 2, p: 5, lens: "400mm", type: "PM", color: "#6366F1", time: "19:08", desc: "Él se sienta, deja el candil.", audio: "Foley metal", script: "H: 'Exacto, pero no...'" },
-            { id: "s2-p6", b: 3, s: 2, p: 6, lens: "50mm", type: "PP", color: "#6366F1", time: "19:15", desc: "Subjetivo: Fija mirada en el sombrero.", audio: "Atmos", script: "Fijo" },
-            { id: "s2-p7", b: 3, s: 2, p: 7, lens: "200mm", type: "PML", color: "#6366F1", time: "19:25", desc: "Ella intenta consolarlo alzando mano.", audio: "Voz", script: "R: 'No quieres más...'" },
-            { id: "s2-p8", b: 3, s: 2, p: 8, lens: "600mm", type: "PP", color: "#6366F1", time: "19:32", desc: "Observa la gran distancia del precipicio.", audio: "Viento", script: "Subjetivo" },
-            { id: "s2-p9", b: 3, s: 2, p: 9, lens: "200mm", type: "PML", color: "#6366F1", time: "19:40", desc: "La joven alza su cabeza y suspira.", audio: "Suspiro", script: "Fijo" },
-            { id: "s2-p10", b: 3, s: 2, p: 10, lens: "400mm", type: "PP", color: "#6366F1", time: "19:50", desc: "Baja el sombrero, ojos húmedos.", audio: "Voz", script: "H: 'Pero no poder amarte...'" },
-            { id: "s2-p11", b: 3, s: 2, p: 11, lens: "200mm", type: "GPG", color: "#6366F1", time: "20:00", desc: "Sentado en el suelo terminando respuesta.", audio: "Voz", script: "H: 'Joder. Sé que lo mejor...'" },
-            { id: "s2-p12", b: 3, s: 2, p: 12, lens: "400mm", type: "PMC", color: "#6366F1", time: "20:08", desc: "Observa mientras él habla. Ojos nostálgicos.", audio: "Voz", script: "R: 'Solo bastaba con verte...'" },
-            { id: "s2-p13", b: 3, s: 2, p: 13, lens: "200mm", type: "PD", color: "#6366F1", time: "20:15", desc: "Mira hacia el sombrero apoyándolo.", audio: "Voz", script: "H: 'Ahora no tengo ganas...'" },
-            { id: "s2-p14", b: 3, s: 2, p: 14, lens: "400mm", type: "PMC", color: "#6366F1", time: "20:25", desc: "Agotado de solo soñarte.", audio: "Voz", script: "H: 'Y pese a eso...'" },
-            { id: "s2-p15", b: 3, s: 2, p: 15, lens: "200mm", type: "PML", color: "#6366F1", time: "20:32", desc: "Réplica serena de ella.", audio: "Voz", script: "R: 'Todo irá bien...'" },
-            { id: "s2-p16", b: 3, s: 2, p: 16, lens: "400mm", type: "PP", color: "#6366F1", time: "20:40", desc: "Sopesa las palabras. ¿Sigo soñando?", audio: "Voz", script: "H: 'Aún no sé si sigo soñando...'" },
-            { id: "s2-p17", b: 3, s: 2, p: 17, lens: "200mm", type: "PG", color: "#6366F1", time: "20:50", desc: "Ella le observa soberbia mientras él sube.", audio: "Ambiente", script: "Acción física" },
-            { id: "s2-p18", b: 3, s: 2, p: 18, lens: "200mm", type: "PG", color: "#6366F1", time: "21:00", desc: "Se levanta y se coloca el sombrero.", audio: "Ambiente", script: "Acción física" },
-            { id: "s2-p19", b: 3, s: 2, p: 19, lens: "400mm", type: "PP", color: "#6366F1", time: "21:10", desc: "Actitud seria. Lágrima en rostro.", audio: "Respiración", script: "R: '¿No ves que no era justo?'" },
-            { id: "s2-p20", b: 3, s: 2, p: 20, lens: "400mm", type: "PP", color: "#6366F1", time: "21:20", desc: "Sostiene su mirada. Nostálgico firme.", audio: "Viento", script: "Acción física" },
-            { id: "s2-p21", b: 3, s: 2, p: 21, lens: "600mm", type: "PPP", color: "#6366F1", time: "21:30", desc: "Sentencia final comprimida.", audio: "Voz", script: "H: 'Nadie merece necesitar...'" },
-            { id: "s2-p22", b: 3, s: 2, p: 22, lens: "50mm", type: "PD", color: "#6366F1", time: "21:45", desc: "La chica enciende el candil.", audio: "Click chispa", script: "Luz práctica" },
-            { id: "s2-p23", b: 3, s: 2, p: 23, lens: "200mm", type: "PD", color: "#6366F1", time: "21:55", desc: "Ojo refleja el eclipse solar.", audio: "Síncope", script: "Clímax visual" }
+            { id: "s2-p1", b: 3, s: 2, p: 1, lens: "200mm", type: "PG-PMC", color: "#6366F1", time: "18:30", desc: "Zoom in: Entra por izquierda, mira al horizonte.", audio: "Viento", script: "Entrada escena" },
+            { id: "s2-p2", b: 3, s: 2, p: 11, lens: "135mm", type: "GPG", color: "#6366F1", time: "18:38", desc: "Sentado en el suelo.", audio: "Voz", script: "H: 'Joder, sé que lo mejor...'" },
+            { id: "s2-p3", b: 3, s: 2, p: 17, lens: "135mm", type: "PG", color: "#6366F1", time: "18:45", desc: "Ella le observa soberbia mientras él se levanta.", audio: "Viento", script: "Acción dramática" },
+            { id: "s2-p4", b: 3, s: 2, p: 18, lens: "135mm", type: "PG", color: "#6366F1", time: "18:52", desc: "Se levanta, se coloca el sombrero y afronta la mirada.", audio: "Foley sombrero", script: "Reacción" },
+            { id: "s2-p5", b: 3, s: 2, p: 2, lens: "200mm", type: "PP", color: "#6366F1", time: "19:00", desc: "Le observa en la distancia.", audio: "Voz", script: "R: 'Una vez más'" },
+            { id: "s2-p6", b: 3, s: 2, p: 4, lens: "135mm", type: "PM", color: "#6366F1", time: "19:07", desc: "Sonríe irónica.", audio: "Voz", script: "R: 'Ya siempre será así, asúmelo'" },
+            { id: "s2-p7", b: 3, s: 2, p: 7, lens: "135mm", type: "PML", color: "#6366F1", time: "19:14", desc: "Intenta consolarlo.", audio: "Voz", script: "R: 'No quieres más mentiras'" },
+            { id: "s2-p8", b: 3, s: 2, p: 9, lens: "135mm", type: "PML", color: "#6366F1", time: "19:21", desc: "Alza la cabeza para observarlo y suspira.", audio: "Suspiro", script: "Silencio / Acción" },
+            { id: "s2-p9", b: 3, s: 2, p: 12, lens: "135mm", type: "PMC", color: "#6366F1", time: "19:28", desc: "Pasa de nostálgica a leve sonrisa.", audio: "Atmos", script: "Transición emotiva" },
+            { id: "s2-p10", b: 3, s: 2, p: 15, lens: "135mm", type: "PML", color: "#6366F1", time: "19:35", desc: "Réplica serena.", audio: "Voz", script: "R: 'Todo irá bien, poco a poco...'" },
+            { id: "s2-p11", b: 3, s: 2, p: 19, lens: "135mm", type: "PP", color: "#6366F1", time: "19:42", desc: "Sentencia con lágrima.", audio: "Voz", script: "R: '¿No ves que no era justo?...'" },
+            { id: "s2-p12", b: 3, s: 2, p: 3, lens: "135mm", type: "PP", color: "#6366F1", time: "19:50", desc: "Hablando para sí.", audio: "Voz", script: "H: 'Lo peor de esto es que me tengo...'" },
+            { id: "s2-p13", b: 3, s: 2, p: 5, lens: "135mm", type: "PM", color: "#6366F1", time: "19:56", desc: "Deja candil, quita sombrero.", audio: "Foley metal", script: "H: 'Exacto, pero no...'" },
+            { id: "s2-p14", b: 3, s: 2, p: 10, lens: "135mm", type: "PP", color: "#6366F1", time: "20:02", desc: "Baja el sombrero con ojos húmedos.", audio: "Voz", script: "H: 'Pero no poder...'" },
+            { id: "s2-p15", b: 3, s: 2, p: 13, lens: "135mm", type: "PD / Subj.", color: "#6366F1", time: "20:08", desc: "Mira hacia el sombrero.", audio: "Voz", script: "H: 'Ahora no tengo ganas...'" },
+            { id: "s2-p16", b: 3, s: 2, p: 14, lens: "135mm", type: "PMC", color: "#6366F1", time: "20:14", desc: "Continuación diálogo.", audio: "Voz", script: "H: 'Y pese a eso, sigo agotado...'" },
+            { id: "s2-p17", b: 3, s: 2, p: 16, lens: "135mm", type: "PP", color: "#6366F1", time: "20:20", desc: "Sopesa palabras.", audio: "Voz", script: "H: 'Aún no sé si sigo soñando...'" },
+            { id: "s2-p18", b: 3, s: 2, p: 20, lens: "135mm", type: "PP", color: "#6366F1", time: "20:26", desc: "Sostiene la mirada. Nostálgico pero firme.", audio: "Viento", script: "Efecto de mirada" },
+            { id: "s2-p19", b: 3, s: 2, p: 21, lens: "135mm", type: "PPP", color: "#6366F1", time: "20:32", desc: "Sentencia.", audio: "Voz", script: "H: 'Nadie merece necesitar a otro...'" },
+            { id: "s2-p20", b: 3, s: 2, p: 6, lens: "50mm", type: "PP", color: "#6366F1", time: "20:40", desc: "Subjetivo: Sombrero contrapicado desde el suelo.", audio: "Atmos", script: "Plano Subjetivo" },
+            { id: "s2-p21", b: 3, s: 2, p: 8, lens: "85mm", type: "PP", color: "#6366F1", time: "21:00", desc: "Subjetivo: Gran distancia del precipicio.", audio: "Viento desierto", script: "Plano Subjetivo" },
+            { id: "s2-p22", b: 3, s: 2, p: 22, lens: "50mm Macro", type: "PD", color: "#6366F1", time: "21:20", desc: "La chica enciende el candil (Luz práctica).", audio: "Click chispa", script: "Luz práctica" },
+            { id: "s2-p23", b: 3, s: 2, p: 23, lens: "85mm Macro", type: "PD", color: "#6366F1", time: "21:40", desc: "Reflejo del eclipse en el ojo (Macro de precisión).", audio: "Síncope", script: "Clímax visual" }
         ];
 
         let progress = JSON.parse(localStorage.getItem('miel_shot_progress') || '{}');
 
         function toggleShotStatus(id, event) {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             progress[id] = !progress[id];
             localStorage.setItem('miel_shot_progress', JSON.stringify(progress));
-            document.getElementById(`card-${id}`).classList.toggle('is-recorded', progress[id]);
+            updateTableRowUI(id);
+        }
+
+        function updateTableRowUI(id) {
+            const isRecorded = !!progress[id];
+            const btn = document.getElementById(`btn-${id}`);
+            const row = document.getElementById(`row-${id}`);
+            const card = document.getElementById(`card-${id}`);
+
+            if (btn) {
+                if (isRecorded) {
+                    btn.className = "px-3 py-1.5 text-[10px] font-black rounded-lg border border-emerald-500/60 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm shadow-emerald-950";
+                    btn.innerHTML = `<span class="text-xs">✓</span> <span>GRABADO</span>`;
+                } else {
+                    btn.className = "px-3 py-1.5 text-[10px] font-bold rounded-lg border border-slate-700 bg-slate-800/80 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-slate-800 transition-all flex items-center gap-1.5 whitespace-nowrap";
+                    btn.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-600"></span> <span>GRABAR</span>`;
+                }
+            }
+
+            if (row) {
+                if (isRecorded) {
+                    row.classList.add('bg-emerald-500/10', 'border-l-4', 'border-l-emerald-500');
+                } else {
+                    row.classList.remove('bg-emerald-500/10', 'border-l-4', 'border-l-emerald-500');
+                }
+            }
+
+            if (card) {
+                card.classList.toggle('is-recorded', isRecorded);
+            }
+        }
+
+        function updateAllTableRowsUI() {
+            shotsData.forEach(shot => {
+                updateTableRowUI(shot.id);
+            });
         }
 
         function renderShots() {
@@ -364,14 +1175,14 @@
                 }
             });
 
-            const lensFreq = { "20mm": 3, "50mm": 6, "70mm": 3, "200mm": 8, "400mm": 9, "600mm": 4 };
+            const lensFreq = { "20mm": 3, "50mm": 6, "70mm": 3, "135mm": 13, "200mm": 3, "85mm Macro": 1 };
             new Chart(document.getElementById('globalLensChart'), {
                 type: 'bar',
                 data: {
                     labels: Object.keys(lensFreq),
                     datasets: [{
                         data: Object.values(lensFreq),
-                        backgroundColor: ['#14B8A6', '#14B8A6', '#F59E0B', '#6366F1', '#6366F1', '#6366F1'],
+                        backgroundColor: ['#14B8A6', '#14B8A6', '#F59E0B', '#6366F1', '#6366F1', '#EC4899'],
                         borderRadius: 8
                     }]
                 },
@@ -388,10 +1199,10 @@
             new Chart(document.getElementById('opticsRadarChart'), {
                 type: 'radar',
                 data: {
-                    labels: ['Normal (50/70mm)', 'Tele 200mm', 'Tele 400mm', 'Tele 600mm'],
+                    labels: ['Normal (50/85mm)', 'Tele 135mm', 'Tele 200mm', 'Angular (20/24/35mm)'],
                     datasets: [{
                         label: 'Impacto Visual',
-                        data: [2, 8, 9, 4],
+                        data: [5, 13, 3, 4],
                         borderColor: '#6366F1',
                         backgroundColor: 'rgba(99, 102, 241, 0.2)',
                         pointBackgroundColor: '#F59E0B'
@@ -408,8 +1219,8 @@
         }
 
         function initPlotly() {
-            const mm = [20, 50, 70, 200, 400, 600];
-            const dof = [10, 4, 2, 0.5, 0.2, 0.05];
+            const mm = [20, 35, 50, 85, 135, 200];
+            const dof = [10, 6, 4, 2, 0.8, 0.3];
             Plotly.newPlot('dofPlot', [{
                 x: mm, y: dof, type: 'scatter', mode: 'lines+markers',
                 line: { color: '#6366F1', shape: 'spline', width: 4 },
@@ -426,6 +1237,7 @@
 
         window.onload = () => {
             renderShots();
+            updateAllTableRowsUI();
             initCharts();
             initPlotly();
         };
